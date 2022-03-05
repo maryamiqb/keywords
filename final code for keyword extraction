@@ -1,0 +1,27 @@
+import pandas as pd
+import openai
+tweets = pd.read_csv("blmtweets.csv",encoding='utf-8')
+import os
+import openai
+
+#REPLACE OPENAI_API_KEY WITH API KEY
+
+openai.api_key = "OPENAI_API_KEY"
+
+#open a text file with all the prompts
+#call the API with each prompt one by one
+# save the categories in another file.
+i=0
+for each in tweets.Text:
+    i+=1
+    response = openai.Completion.create(
+    engine="text-davinci-001",
+    prompt=("Extract keywords from this text:\n\n"+str(each)),
+    temperature=0.3,
+    max_tokens=100,
+    top_p=1,
+    frequency_penalty=0.8,
+    presence_penalty=0
+    )
+    for choice in response['choices']:
+        print(";"+ choice['text'])
