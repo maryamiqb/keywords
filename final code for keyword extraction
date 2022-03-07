@@ -1,6 +1,15 @@
+#import libraries
 import pandas as pd
 import openai
+import numpy as np
+
+#read blm tweets
 tweets = pd.read_csv("blmtweets.csv",encoding='utf-8')
+
+#add a keywords column
+tweets.insert(5, "keywords", np.nan)
+
+#import openai 
 import os
 import openai
 
@@ -11,9 +20,18 @@ openai.api_key = "OPENAI_API_KEY"
 #open a text file with all the prompts
 #call the API with each prompt one by one
 # save the categories in another file.
+
+#to keep track of numbering if necessary
 i=0
+
+#create keywords list for appending to excel spreadsheet
+keywordslist = []
+
+#for loop to put each tweet through openai keyword extraction
 for each in tweets.Text:
+    #adding to index for each tweet to number accurately 
     i+=1
+    #code from openai site
     response = openai.Completion.create(
     engine="text-davinci-001",
     prompt=("Extract keywords from this text:\n\n"+str(each)),
@@ -23,5 +41,9 @@ for each in tweets.Text:
     frequency_penalty=0.8,
     presence_penalty=0
     )
+    #print keywords for each tweet
     for choice in response['choices']:
-        print(";"+ choice['text'])
+        print(choice['text'])
+     #if excel appending is needed, unhashtag the two lines below
+        #keywordslist.append(choice['text'])
+#tweets = tweets.append({"keywords": keywordslist}, ignore_index=True)
